@@ -101,3 +101,22 @@ def test_factory_raises_on_unknown_provider():
 
     with pytest.raises(ProviderError, match="Unknown provider"):
         get_provider("nonexistent")
+
+
+def test_factory_falls_back_to_default_provider(monkeypatch):
+    """When no name is given, factory uses settings.default_provider."""
+    from providers import factory
+
+    monkeypatch.setattr(factory.settings, "default_provider", "local")
+    provider = factory.get_provider(None)
+    assert isinstance(provider, LocalMockProvider)
+
+
+def test_factory_anthropic_fails_without_api_key(monkeypatch):
+    """Anthropic provider should raise ProviderError when API key is missing."""
+    from providers import factory
+
+    monkeypatch.setattr(factory.settings, "anthropic_api_key", "")
+    with pytest.raises(ProviderError, match="ANTHROPIC_API_KEY is not set"):
+        factory.get_provider("anthropic")
+
