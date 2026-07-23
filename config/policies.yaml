@@ -1,0 +1,17 @@
+rules:
+  - name: block_pii
+    type: input
+    guardrail: pii_detection
+    action: redact
+    entities: [EMAIL, PHONE, CREDIT_CARD]
+
+  - name: length_limit
+    type: input
+    guardrail: length_guard
+    max_tokens: 4000
+
+  - name: rate_limit
+    type: input
+    guardrail: rate_limit
+    max_requests: 20
+    window_seconds: 60
